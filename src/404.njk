@@ -1,0 +1,27 @@
+---
+layout: layouts/base.njk
+permalink: /404.html
+eleventyExcludeFromCollections: true
+title: "Page not found | Terms"
+description: "The page you were looking for could not be found."
+robots: "noindex, follow"
+---
+{%- from "partials/icons.njk" import icon %}
+<header class="page-hero page-hero--compact">
+  <div class="wrap wrap--narrow">
+    <p class="eyebrow">Error 404</p>
+    <h1>Page not found</h1>
+    <p class="lede">The page you were looking for could not be found. It may have been moved, or the address may be mistyped. Like any good contract, this one has a clause for that: start again from the directory.</p>
+    <div class="actions">
+      <a class="btn btn--primary" href="/">{{ icon("search") }} Browse all services</a>
+    </div>
+  </div>
+</header>
+<div class="wrap wrap--narrow page-body">
+  <h2>Browse by type</h2>
+  <ul class="chips chips--light">
+    {%- for category in categories %}
+    <li><a href="/{{ category.slug }}/">{{ icon(category.icon) }} {{ category.name }}</a></li>
+    {%- endfor %}
+  </ul>
+</div>

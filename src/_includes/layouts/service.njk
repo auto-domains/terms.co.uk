@@ -1,0 +1,133 @@
+---
+layout: layouts/base.njk
+---
+{%- from "partials/icons.njk" import icon %}
+{%- set cat = category | categoryByKey %}
+{%- set parts = content | splitContent(2) %}
+{%- set sections = content | toc %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="wrap">
+    <li><a href="/">Home</a></li>
+    <li><a href="/{{ cat.slug }}/">{{ cat.name }}</a></li>
+    <li aria-current="page">{{ name }}</li>
+  </ol>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">{{ icon(cat.icon) }} {{ cat.name }}</p>
+    <h1>{{ name }}</h1>
+    <p class="lede">{{ summary }}</p>
+    {%- if tags %}
+    <ul class="tags tags--hero" aria-label="Features">
+      {%- for tag in tags %}
+      <li>{{ tag }}</li>
+      {%- endfor %}
+    </ul>
+    {%- endif %}
+    <div class="actions">
+      <a class="btn btn--primary" href="{{ website }}" rel="nofollow noopener">Go to {{ website | displayUrl }} {{ icon("external") }}</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap service-layout">
+  <article class="service-main">
+    {%- if sections.length > 2 %}
+    <nav class="toc" aria-label="On this page">
+      <p class="toc__title">On this page</p>
+      <ol>
+        {%- for s in sections %}
+        <li><a href="#{{ s.id }}">{{ s.text | safe }}</a></li>
+        {%- endfor %}
+        {%- if faqs %}
+        <li><a href="#faqs">Frequently asked questions</a></li>
+        {%- endif %}
+      </ol>
+    </nav>
+    {%- endif %}
+
+    <div class="prose">
+      {{ parts[0] | safe }}
+      {%- set adSlot = "article" %}
+      {% include "partials/ad.njk" %}
+      {{ parts[1] | safe }}
+    </div>
+
+    <aside class="notice" aria-label="Not legal advice">
+      {{ icon("info") }}
+      <p><strong>Not legal advice.</strong> {{ site.domain }} describes what each service offers but does not review the documents it produces. A generated or template document is a starting point: check it matches how your business actually works, and ask a solicitor if your situation is unusual or high risk.</p>
+    </aside>
+
+    {%- if faqs %}
+    <section class="faqs" id="faqs" aria-labelledby="faqs-heading">
+      <h2 id="faqs-heading">Frequently asked questions</h2>
+      {%- for faq in faqs %}
+      <details class="faq"{% if loop.first %} open{% endif %}>
+        <summary>{{ faq.q }}</summary>
+        <p>{{ faq.a }}</p>
+      </details>
+      {%- endfor %}
+    </section>
+    {%- endif %}
+
+    {%- if sources %}
+    <section class="sources" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Sources</h2>
+      <ol>
+        {%- for source in sources %}
+        <li><a href="{{ source }}" rel="nofollow noopener">{{ source | displayUrl }}</a></li>
+        {%- endfor %}
+      </ol>
+    </section>
+    {%- endif %}
+  </article>
+
+  <aside class="service-aside">
+    <section class="facts" aria-labelledby="facts-heading">
+      <h2 id="facts-heading">At a glance</h2>
+      <dl>
+        <div><dt>Website</dt><dd><a href="{{ website }}" rel="nofollow noopener">{{ website | displayUrl }}</a></dd></div>
+        <div><dt>Type</dt><dd><a href="/{{ cat.slug }}/">{{ cat.name }}</a></dd></div>
+        {%- if price %}<div><dt>Price</dt><dd>{{ price }}</dd></div>{% endif %}
+        {%- if freeOption | yesNo %}<div><dt>Free option</dt><dd>{{ freeOption | yesNo }}</dd></div>{% endif %}
+        {%- if account %}<div><dt>Account</dt><dd>{{ account | accountLabel }}</dd></div>{% endif %}
+        {%- if laws %}<div><dt>Laws covered</dt><dd>{{ laws }}</dd></div>{% endif %}
+        {%- if autoUpdates | yesNo %}<div><dt>Auto updates</dt><dd>{{ autoUpdates | yesNo }}</dd></div>{% endif %}
+        {%- if hosted | yesNo %}<div><dt>Hosted policy</dt><dd>{{ hosted | yesNo }}</dd></div>{% endif %}
+        {%- if formats %}<div><dt>Formats</dt><dd>{{ formats }}</dd></div>{% endif %}
+        {%- if lawyerReview %}<div><dt>Lawyer review</dt><dd>{{ lawyerReview }}</dd></div>{% endif %}
+        {%- if openSource %}<div><dt>Open source</dt><dd><a href="{{ openSource }}" rel="nofollow noopener">Yes, view source</a></dd></div>{% endif %}
+        {%- if operator %}<div><dt>Run by</dt><dd>{{ operator }}</dd></div>{% endif %}
+        {%- if founded %}<div><dt>Launched</dt><dd>{{ founded }}</dd></div>{% endif %}
+      </dl>
+      {%- if documents %}
+      <h3 class="facts__sub">Documents</h3>
+      <ul class="doc-list">
+        {%- for doc in documents %}
+        <li>{{ icon("file") }} {{ doc }}</li>
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+      {%- if verified %}
+      <p class="facts__verified">{{ icon("check") }} Checked {{ verified | readableDate }}</p>
+      {%- endif %}
+    </section>
+    {%- set adSlot = "sidebar" %}
+    {% include "partials/ad.njk" %}
+
+    {%- set others = collections.services | related({ url: page.url, category: category }) %}
+    {%- if others.length %}
+    <section class="related" aria-labelledby="related-heading">
+      <h2 id="related-heading">Similar services</h2>
+      <ul>
+        {%- for s in others %}
+        <li><a href="{{ s.url }}"><strong>{{ s.data.name }}</strong><span>{{ s.data.website | displayUrl }}</span></a></li>
+        {%- endfor %}
+      </ul>
+      <a class="related__all" href="/{{ cat.slug }}/">All {{ cat.name | lower }} services {{ icon("arrow") }}</a>
+    </section>
+    {%- endif %}
+  </aside>
+</div>
+<script type="application/ld+json">{{ ({ "site": site, "page": page, "name": name, "summary": summary, "website": website, "category": category, "openSource": openSource, "founded": founded, "title": title, "description": description, "verified": verified, "faqs": faqs }) | serviceSchema | jsonLd | safe }}</script>

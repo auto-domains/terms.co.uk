@@ -1,0 +1,115 @@
+---
+layout: layouts/base.njk
+title: "Terms and Conditions Generators and Legal Templates Compared"
+description: "Independent directory of terms and conditions, terms of service and privacy policy generators and legal template sites, with prices and UK law coverage."
+faqs:
+  - q: "Do I need terms and conditions for my website?"
+    a: "There is no single law in the UK that makes website terms and conditions compulsory, but they are strongly advisable if you sell online, because consumer law requires you to give buyers certain information before they order. Most websites that collect personal data also need a privacy notice under UK GDPR, and sites that use non-essential cookies need consent under PECR."
+  - q: "What is the difference between terms and conditions and terms of service?"
+    a: "In practice the names are interchangeable. Terms and conditions, terms of service and terms of use all describe the rules for using a website or buying from a business. A privacy policy is a separate document that explains how you collect and use personal data."
+  - q: "Are free terms and conditions generators any good?"
+    a: "They can give a reasonable starting point for a simple website or app. Free tools usually produce a one-off document that you must update yourself, and may cover fewer laws. Paid generators and lawyer-drafted templates tend to cover more situations and some update your policies when the law changes."
+  - q: "Can I copy another website's terms and conditions?"
+    a: "You should not. Another business's terms are protected by copyright and will describe its own products, processes and risks, not yours. Copied terms can be inaccurate for your business and may leave you exposed."
+  - q: "Does terms.co.uk write legal documents?"
+    a: "No. terms.co.uk is an independent directory that compares other services. It does not create documents, give legal advice or have any connection with the services listed."
+---
+{%- from "partials/icons.njk" import icon %}
+{%- set services = collections.services %}
+<section class="home-hero">
+  <div class="wrap">
+    <p class="eyebrow">Independent directory</p>
+    <h1>Where to create terms and conditions, privacy policies and more</h1>
+    <p class="lede">{{ services.length }} policy generators and legal template sites compared, with prices, free options, laws covered and hosting, so you can choose the right way to get terms and conditions, a terms of service, a privacy policy or a cookie policy for your website, app or shop.</p>
+    <form class="search" role="search" data-search hidden>
+      <label for="service-search" class="visually-hidden">Search services by name or feature</label>
+      {{ icon("search") }}
+      <input id="service-search" type="search" placeholder="Search, for example cookie policy, GDPR or Termly" autocomplete="off" spellcheck="false">
+    </form>
+    <ul class="chips" aria-label="Jump to a category">
+      {%- for category in categories %}
+      <li><a href="#{{ category.slug }}">{{ icon(category.icon) }} {{ category.name }} <span class="chips__count">{{ (services | byCategory(category.key)).length }}</span></a></li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+
+<div class="wrap listing">
+  <p class="search-empty" id="search-empty" hidden>No services match your search. Try a name, such as iubenda, or a document, such as refund policy.</p>
+
+  {%- for category in categories %}
+  {%- set list = services | byCategory(category.key) %}
+  <section class="category-group" id="{{ category.slug }}" aria-labelledby="{{ category.slug }}-heading">
+    <div class="section-head">
+      <h2 id="{{ category.slug }}-heading">{{ category.name }}</h2>
+      <a class="section-head__link" href="/{{ category.slug }}/">Compare {{ category.name | lower }} {{ icon("arrow") }}</a>
+    </div>
+    <p class="section-intro">{{ category.intro }}</p>
+    <ul class="card-grid">
+      {%- for s in list %}
+      {% include "partials/service-card.njk" %}
+      {%- endfor %}
+    </ul>
+  </section>
+  {%- if loop.first %}
+  {%- set adSlot = "listing" %}
+  {% include "partials/ad.njk" %}
+  {%- endif %}
+  {%- endfor %}
+
+  {%- if site.sale.enabled %}
+  <section class="sale-callout" aria-labelledby="sale-heading">
+    <div>
+      <p class="eyebrow">{{ icon("tag") }} Domain for sale</p>
+      <h2 id="sale-heading">Buy {{ site.domain }}</h2>
+      <p>This domain name is available. A short, exact-match .co.uk for a legal documents, compliance or policy generator business. Send an enquiry and we will get back to you.</p>
+    </div>
+    <a class="btn btn--accent" href="{{ site.sale.path }}">Make an offer {{ icon("arrow") }}</a>
+  </section>
+  {%- endif %}
+
+  <section class="guide" aria-labelledby="guide-heading">
+    <div class="guide__intro">
+      <h2 id="guide-heading">Choosing a service</h2>
+      <p><strong>For a simple website or blog</strong>, a free generator can produce a basic privacy policy and terms of use in a few minutes. <strong>For an online shop or a subscription service</strong>, look for terms that cover consumer rights, delivery, cancellations and refunds, and consider a paid tool or a template drafted for English law. <strong>For an app or SaaS product</strong>, check the tool covers end user licence agreements and the app store's own requirements.</p>
+      <p><strong>Think about upkeep.</strong> Data protection and consumer law changes, and so does your business. Generators that host your policies and update them automatically save work, while one-off documents need reviewing yourself. If your business carries more risk, a solicitor review is worth the cost.</p>
+      <p>Every listing is researched from the service's own pages and shows the date it was last checked. Read more <a href="/about/">about this directory</a>.</p>
+    </div>
+    <div class="faqs" id="faqs">
+      <h2>Frequently asked questions</h2>
+      {%- for faq in faqs %}
+      <details class="faq"{% if loop.first %} open{% endif %}>
+        <summary>{{ faq.q }}</summary>
+        <p>{{ faq.a }}</p>
+      </details>
+      {%- endfor %}
+    </div>
+  </section>
+</div>
+
+<script>
+  (function () {
+    var form = document.querySelector('[data-search]');
+    if (!form) return;
+    var input = form.querySelector('input');
+    var cards = Array.prototype.slice.call(document.querySelectorAll('[data-search-text]'));
+    var groups = Array.prototype.slice.call(document.querySelectorAll('.category-group'));
+    var empty = document.getElementById('search-empty');
+    form.hidden = false;
+    form.addEventListener('submit', function (event) { event.preventDefault(); });
+    input.addEventListener('input', function () {
+      var query = input.value.trim().toLowerCase();
+      var matches = 0;
+      cards.forEach(function (card) {
+        var match = !query || card.getAttribute('data-search-text').indexOf(query) !== -1;
+        card.hidden = !match;
+        if (match) matches++;
+      });
+      groups.forEach(function (group) {
+        group.hidden = !group.querySelector('[data-search-text]:not([hidden])');
+      });
+      empty.hidden = matches !== 0;
+    });
+  })();
+</script>
+<script type="application/ld+json">{{ services | homeSchema({ "site": site, "title": title, "description": description, "faqs": faqs }) | jsonLd | safe }}</script>

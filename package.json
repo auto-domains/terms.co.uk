@@ -1,0 +1,22 @@
+{
+  "name": "terms.co.uk",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Independent directory of terms and conditions and privacy policy generators and legal template sites, built with Eleventy for Cloudflare Pages.",
+  "type": "module",
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve",
+    "clean": "rm -rf _site"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/auto-domains/terms.co.uk.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6"
+  }
+}

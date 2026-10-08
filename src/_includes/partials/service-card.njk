@@ -1,0 +1,26 @@
+{%- from "partials/icons.njk" import icon %}
+{%- set cat = s.data.category | categoryByKey %}
+<li class="card card--{{ s.data.category }}" data-search-text="{{ s | searchText }}">
+  <div class="card__head">
+    <span class="card__icon" title="{{ cat.name }}">{{ icon(cat.icon) }}</span>
+    <div>
+      <h3 class="card__title"><a href="{{ s.url }}">{{ s.data.name }}</a></h3>
+      <p class="card__domain">{{ s.data.website | displayUrl }}</p>
+    </div>
+    {%- if s.data.freeOption %}
+    <span class="card__badge">Free option</span>
+    {%- endif %}
+  </div>
+  <p class="card__summary">{{ s.data.summary }}</p>
+  {%- if s.data.tags %}
+  <ul class="tags" aria-label="Features">
+    {%- for tag in s.data.tags %}
+    <li>{{ tag }}</li>
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+  <div class="card__foot">
+    <a class="card__more" href="{{ s.url }}" aria-label="{{ s.data.name }} review and prices">Details {{ icon("arrow") }}</a>
+    <a class="card__visit" href="{{ s.data.website }}" rel="nofollow noopener">Visit {{ icon("external") }}<span class="visually-hidden"> {{ s.data.name }} (external site)</span></a>
+  </div>
+</li>

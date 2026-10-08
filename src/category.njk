@@ -1,0 +1,84 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: categories
+  size: 1
+  alias: category
+permalink: "/{{ category.slug }}/"
+eleventyComputed:
+  title: "{{ category.title }}"
+  description: "{{ category.metaDescription }}"
+---
+{%- from "partials/icons.njk" import icon %}
+{%- set list = collections.services | byCategory(category.key) %}
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="wrap">
+    <li><a href="/">Home</a></li>
+    <li aria-current="page">{{ category.name }}</li>
+  </ol>
+</nav>
+
+<header class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">{{ icon(category.icon) }} {{ list.length }} services</p>
+    <h1>{{ category.heading }}</h1>
+    <p class="lede">{{ category.intro }}</p>
+  </div>
+</header>
+
+<div class="wrap listing">
+  <ul class="card-grid">
+    {%- for s in list %}
+    {% include "partials/service-card.njk" %}
+    {%- endfor %}
+  </ul>
+
+  {%- set adSlot = "listing" %}
+  {% include "partials/ad.njk" %}
+
+  <section class="compare" aria-labelledby="compare-heading">
+    <h2 id="compare-heading">{{ category.name }} compared</h2>
+    <p>A side by side summary. Prices and features change, so follow the link to each review for details and sources.</p>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Service</th>
+            <th scope="col">Price</th>
+            <th scope="col">Free option</th>
+            {%- if category.key == "templates" %}
+            <th scope="col">Drafted for</th>
+            <th scope="col">Lawyer review</th>
+            {%- else %}
+            <th scope="col">Auto updates</th>
+            <th scope="col">Hosted policy</th>
+            {%- endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {%- for s in list %}
+          <tr>
+            <th scope="row"><a href="{{ s.url }}">{{ s.data.name }}</a></th>
+            <td>{{ s.data.price or "Not stated" }}</td>
+            {%- set flags = [s.data.freeOption] if category.key == "templates" else [s.data.freeOption, s.data.autoUpdates, s.data.hosted] %}
+            {%- for value in flags %}
+            <td>{% if value === true %}<span class="yes">{{ icon("check") }} Yes</span>{% elif value === false %}No{% else %}<span class="unknown">Not stated</span>{% endif %}</td>
+            {%- endfor %}
+            {%- if category.key == "templates" %}
+            <td>{{ s.data.laws or "Not stated" }}</td>
+            <td>{% if s.data.lawyerReview %}<span class="yes">{{ icon("check") }} Yes</span>{% else %}<span class="unknown">Not stated</span>{% endif %}</td>
+            {%- endif %}
+          </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {%- for other in categories %}
+  {%- if other.key != category.key %}
+  <p class="cross-link">Looking for something else? <a href="/{{ other.slug }}/">Compare {{ other.name | lower }} {{ icon("arrow") }}</a></p>
+  {%- endif %}
+  {%- endfor %}
+</div>
+<script type="application/ld+json">{{ list | categorySchema(category, { "site": site }) | jsonLd | safe }}</script>

@@ -1,0 +1,106 @@
+{%- from "partials/icons.njk" import icon -%}
+{%- set metaTitle = title if title else site.title -%}
+{%- set metaDescription = description if description else site.description -%}
+{%- set canonical = site.url + page.url -%}
+<!doctype html>
+<html lang="{{ site.lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ metaTitle }}</title>
+  <meta name="description" content="{{ metaDescription }}">
+  {%- if page.url %}
+  <link rel="canonical" href="{{ canonical }}">
+  {%- endif %}
+  <meta name="robots" content="{{ robots or 'index, follow, max-image-preview:large' }}">
+  <meta property="og:type" content="{{ ogType or 'website' }}">
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:title" content="{{ metaTitle }}">
+  <meta property="og:description" content="{{ metaDescription }}">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#1d2a44">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/style.css?v={{ site.version }}">
+  {% include "partials/tracking.njk" %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap site-header__inner">
+      <a class="brand" href="/">
+        <span class="brand__mark">{{ icon("scale") }}</span>
+        <span class="brand__name">terms<span class="brand__tld">.co.uk</span></span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          {%- for category in categories %}
+          <li><a href="/{{ category.slug }}/"{% if page.url == "/" + category.slug + "/" %} aria-current="page"{% endif %}>{{ category.name }}</a></li>
+          {%- endfor %}
+          <li><a href="/about/"{% if page.url == "/about/" %} aria-current="page"{% endif %}>About</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    {{ content | safe }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        {%- for category in categories %}
+        <section>
+          <h2 class="footer-heading"><a href="/{{ category.slug }}/">{{ category.name }}</a></h2>
+          <ul>
+            {%- for s in collections.services | byCategory(category.key) %}
+            <li><a href="{{ s.url }}">{{ s.data.name }}</a></li>
+            {%- endfor %}
+          </ul>
+        </section>
+        {%- endfor %}
+        {%- if site.sale.enabled %}
+        <section class="footer-sale">
+          <h2 class="footer-heading">This domain is for sale</h2>
+          <p>{{ site.domain }} is available to buy. A short, exact-match name for a legal documents, compliance or policy generator business. Send an offer.</p>
+          <a class="btn btn--accent" href="{{ site.sale.path }}">Enquire about {{ site.domain }}</a>
+        </section>
+        {%- endif %}
+      </div>
+      <div class="footer-meta">
+        <p>{{ site.domain }} is an independent directory. It is not connected to any of the services listed and does not give legal advice. Prices and features change, so check each service's own website, and take advice from a qualified lawyer if you are unsure what your business needs.</p>
+        <nav class="footer-links" aria-label="Footer">
+          <a href="/about/">About</a>
+          <a href="/contact/">Contact</a>
+          <a href="/privacy/">Privacy and cookies</a>
+          {%- if site.sale.enabled %}
+          <a href="{{ site.sale.path }}">Domain for sale</a>
+          {%- endif %}
+          <a href="/sitemap.xml">Sitemap</a>
+          {%- if site.adsense.client %}
+          <button type="button" class="linklike" data-consent-settings hidden>Cookie settings</button>
+          {%- endif %}
+        </nav>
+        <p class="copyright">&copy; {{ site.year }} {{ site.domain }}</p>
+      </div>
+    </div>
+  </footer>
+  {%- if site.adsense.client %}
+  <script>
+    (function () {
+      var button = document.querySelector('[data-consent-settings]');
+      window.googlefc = window.googlefc || {};
+      window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+      window.googlefc.callbackQueue.push({ CONSENT_API_READY: function () {
+        if (!button || typeof window.googlefc.showRevocationMessage !== 'function') return;
+        button.hidden = false;
+        button.addEventListener('click', function () { window.googlefc.showRevocationMessage(); });
+      } });
+    })();
+  </script>
+  {%- endif %}
+</body>
+</html>
